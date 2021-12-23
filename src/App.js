@@ -1,47 +1,15 @@
 import { useState, useEffect } from 'react';
+import apiService from './services/api-service';
 import Button from './components/Button';
+
 function App() {
-  const BASEURL = 'https://swapi.dev/api';
-
   /**
-   * gets initial data according to dataType
-   * @param {String} dataType - represents which data do you want to receive. ie 'plants'
-   * @returns {Object} - containing the data required to initialize 
+   * gets all planets and saves only required data in hashmap.
+   * in addition, adds selected planets to the store.
+   * @returns {Object} - planetsHashMap, contains planet name and planet population of all the planets
    */
-  const getInitialData = async (dataType) => {
-    const initialData = await (await fetch(`${BASEURL}/${dataType}/`)).json();
-    const pages = Math.ceil(initialData.count / initialData.results.length);
-    return {
-      initialPage: initialData.next,
-      pages,
-      results: initialData.results,
-    };
-  };
-
-  /**
-   * 
-   * @param {String} link - a initial link to get data from
-   * @param {Number} pages - the amount of pages to get data from
-   * @returns {Array} - all the data collected
-   */
-  const getDataFromAllPages = async (link, pages) => {
-    const dataArr = [];
-    for (let page = 1; page < pages; page++) {
-      const data = await (await fetch(link)).json();
-      link = data.next;
-      dataArr.push(...data.results);
-    }
-    return dataArr;
-  };
-
-  /**
-   * takes all data regarding all planets and extracts name and population.
-   * in addition it adds selected planets to the store.
-   * @returns {Object} - contains planet name and planet population of all the planets
-   */
-  const getPlanets = async () => {
-    const planetsObj = {};
-    const planetsForChartArr = [];
+  const getAllPlanetsAndInitializePlanetChart = async () => {
+    const planetsForChart = [];
     const selectedPlanets = {
       Tatooine: true,
       Alderaan: true,
@@ -49,134 +17,118 @@ function App() {
       Bespin: true,
       Endor: true,
     };
-    const planetsArr = [];
-    const initialPlanetsData = await getInitialData('planets');
-    planetsArr.push(...initialPlanetsData.results);
-    planetsArr.push(
-      ...(await getDataFromAllPages(
+    const allPlanets = [];
+    const planetsHashMap = {};
+    const initialPlanetsData = await apiService.getInitialDataFor('planets');
+    allPlanets.push(...initialPlanetsData.results);
+    allPlanets.push(
+      ...(await apiService.getDataFromAllPages(
         initialPlanetsData.initialPage,
-        initialPlanetsData.pages
+        initialPlanetsData.totalNumOfPages
       ))
     );
-
-    for (let planet of planetsArr) {
-      planetsObj[`${planet.url}`] = {
-        homeworld: planet.name,
+    for (let planet of allPlanets) {
+      const planetObj = {
+        name: planet.name,
         population:
           planet.population === 'unknown' ? 0 : parseInt(planet.population),
       };
+      planetsHashMap[planet.url] = planetObj;
       if (selectedPlanets[`${planet.name}`]) {
-        planetsForChartArr.push({
-          name: planet.name,
-          population:
-            planet.population === 'unknown' ? 0 : parseInt(planet.population),
-        });
+        planetsForChart.push(planetObj);
       }
     }
-
-    setPlanets(planetsForChartArr);
-    return planetsObj;
+    setPlanets(planetsForChart);
+    return planetsHashMap;
   };
 
-
-  const getPeople = async (planetsObj) => {
-    const peopleArr = [];
-    const peopleObj = {};
-    const initialPeopleData = await getInitialData('people');
-    peopleArr.push(...initialPeopleData.results);
-    peopleArr.push(
-      ...(await getDataFromAllPages(
-        initialPeopleData.initialPage,
-        initialPeopleData.pages
-      ))
-    );
-    for (let pilot of peopleArr) {
-      peopleObj[`${pilot.url}`] = {
-        name: pilot.name + ' ',
-        homeworld: planetsObj[`${pilot.homeworld}`],
-      };
-    }
-
-    return peopleObj;
-  };
-  const getVehicles = async (peopleObj) => {
-    let largestPopulation = 0;
-    let currVehicle = {};
+  /**
+   * gets all vehicles and saves only required data in hashMap.
+   * @returns {Object} - contains vehicles hashMap and an Array of pilot urls
+   */
+  const getVehiclesAndPilotsUrl = async () => {
     const vehiclesArr = [];
-    const vehiclesObj = {};
-    const initialVehiclesData = await getInitialData('starships');
+    const pilotsUrl = [];
+    const checkForCopiesHashMap = {};
+    const vehiclesHashMap = {};
+    const initialVehiclesData = await apiService.getInitialDataFor('vehicles');
     vehiclesArr.push(...initialVehiclesData.results);
     vehiclesArr.push(
-      ...(await getDataFromAllPages(
+      ...(await apiService.getDataFromAllPages(
         initialVehiclesData.initialPage,
-        initialVehiclesData.pages
+        initialVehiclesData.totalNumOfPages
       ))
     );
     for (let vehicle of vehiclesArr) {
       if (vehicle.pilots.length > 0) {
-        vehiclesObj[`${vehicle.name}`] = {
-          pilots: vehicle.pilots.reduce((arr, val) => {
-            arr[`${peopleObj[val].name}`] = peopleObj[val].homeworld;
-            return arr;
-          }, {}),
+        vehiclesHashMap[vehicle.url] = {
+          name: vehicle.name,
+          pilots: {},
+          populationSumOfAllPilots: 0,
+          url: vehicle.url,
         };
-        vehiclesObj[`${vehicle.name}`].populationSumOfAllPilots = Object.keys(
-          vehiclesObj[`${vehicle.name}`].pilots
-        ).reduce((previous, key) => {
-          return (
-            previous + vehiclesObj[`${vehicle.name}`].pilots[key].population
-          );
-        }, 0);
-
-        if (
-          vehiclesObj[`${vehicle.name}`].populationSumOfAllPilots >
-          largestPopulation
-        ) {
-          largestPopulation =
-            vehiclesObj[`${vehicle.name}`].populationSumOfAllPilots;
-          currVehicle = vehiclesObj[`${vehicle.name}`];
-          currVehicle.name = vehicle.name;
-        }
+        vehicle.pilots.forEach((pilotURL) => {
+          vehiclesHashMap[vehicle.url].pilots[pilotURL] = pilotURL;
+          if (checkForCopiesHashMap[pilotURL]) {
+            console.log('pilot already exist');
+          } else {
+            pilotsUrl.push(pilotURL);
+            checkForCopiesHashMap[pilotURL] = pilotURL;
+          }
+        });
       }
     }
-
-    return currVehicle;
-  };
-  const getVehicles2 = async (peopleObj) => {
-    let currVehicle = {};
-    const vehiclesArr = [];
-    const pilotsUrl = []
-    const initialVehiclesData = await getInitialData('starships');
-    vehiclesArr.push(...initialVehiclesData.results);
-    vehiclesArr.push(
-      ...(await getDataFromAllPages(
-        initialVehiclesData.initialPage,
-        initialVehiclesData.pages
-      ))
-    );
-    for (let vehicle of vehiclesArr) {
-      for(let pilot in vehicle.pilots){
-        pilotsUrl.push(pilot.url)
-      }
-    }
-
-    return currVehicle;
+    return {
+      pilotsUrl,
+      vehicles: vehiclesHashMap,
+    };
   };
 
   const [vehicle, setVehicle] = useState();
   const [planets, setPlanets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
-    const fetchDate = async () => {
-      const planetsObj = await getPlanets();
-      const peopleObj = await getPeople(planetsObj);
-      const currVehicle = await getVehicles(peopleObj);
-      setVehicle(currVehicle);
+    /**
+     * gets all vehicles and their pilots,
+     * gets all pilots and their home planets,
+     * gets all planets and initializes planet chart,
+     * inserts planets in pilots and pilots in vehicles
+     * finds the vehicle with the largest sum of all pilots home planets population and sets store
+     * disables the loader
+     */
+    const initializeApp = async () => {
+      const { vehicles, pilotsUrl } = await getVehiclesAndPilotsUrl();
+      const pilots = await apiService.getPilotsAndTheirHomeWorldsUrl(pilotsUrl);
+      const planets = await getAllPlanetsAndInitializePlanetChart();
+      let selectedVehicle = {};
+
+      for (let vehicle of Object.values(vehicles)) {
+        let populationSumOfAllPilots = 0;
+        let maxPopulationSumOfAllPilots = 0;
+        for (let pilotURL in vehicle.pilots) {
+          const pilot = { ...pilots[pilotURL] };
+          pilot.homeWorld = planets[pilot.homeWorld];
+          populationSumOfAllPilots = +pilot.homeWorld.population;
+          vehicles[vehicle.url].pilots[pilotURL] = pilot;
+        }
+        vehicles[vehicle.url].populationSumOfAllPilots =
+          populationSumOfAllPilots;
+        if (populationSumOfAllPilots > maxPopulationSumOfAllPilots) {
+          maxPopulationSumOfAllPilots = populationSumOfAllPilots;
+          selectedVehicle = vehicles[vehicle.url];
+        }
+      }
+
+      console.log(vehicles);
+      console.log(selectedVehicle);
+      setVehicle(selectedVehicle);
       setIsLoading(false);
     };
 
-    fetchDate();
+    initializeApp();
   }, []);
+
   return (
     <div>
       <div
@@ -195,13 +147,20 @@ function App() {
                 Related home planets and their respective population
               </td>
               <td className='box'>
-                {vehicle ? JSON.stringify(Object.values(vehicle.pilots)) : ''}
+                {vehicle
+                  ? Object.values(vehicle.pilots).map((pilot) => [
+                      pilot.homeWorld.name + ', ',
+                      pilot.homeWorld.population,
+                    ])
+                  : ''}
               </td>
             </tr>
             <tr className='flexup'>
               <td className='box'>Related pilot names</td>
               <td className='box'>
-                {vehicle ? Object.keys(vehicle.pilots) : ''}
+                {vehicle
+                  ? Object.values(vehicle.pilots).map((pilot) => pilot.name)
+                  : ''}
               </td>
             </tr>
             <tr></tr>
@@ -214,7 +173,7 @@ function App() {
               <div
                 className='bar'
                 style={{
-                  height: `${Math.ceil(planet.population / 10000000)}px`,
+                  height: `${Math.ceil(planet.population / 20000000)}px`,
                 }}
               ></div>
               <span>{planet.name}</span>
@@ -222,7 +181,10 @@ function App() {
           ))}
         </div>
       </div>
-      <div className='pageLoading' style={isLoading ? { display: 'flex' } : { display: 'none' }}>
+      <div
+        className='pageLoading'
+        style={isLoading ? { display: 'flex' } : { display: 'none' }}
+      >
         <div className='loader'>Loading...</div>
       </div>
     </div>
