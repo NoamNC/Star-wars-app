@@ -1,56 +1,36 @@
 const BASEURL = 'https://swapi.dev/api';
 
 /**
- * gets initial data according to dataType
- * @param {String} dataType - represents which data do you want to receive. ie 'plants'
- * @returns {Object} - containing the data required to initialize
+ * gets data according to dataType
+ * @param {String} dataType  represents which data do you want to receive. ie 'planets'
+ * @returns {Array}  containing the data 
  */
-const getInitialDataFor = async (dataType) => {
-  const initialData = await (await fetch(`${BASEURL}/${dataType}/`)).json();
-  return {
-    initialPage: initialData.next,
-    totalNumOfPages: Math.ceil(initialData.count / initialData.results.length),
-    results: initialData.results,
-  };
+const getDataFor = async (dataType) => {
+  let data = await (await fetch(`${BASEURL}/${dataType}/`)).json();
+  const results = data.results;
+  let nextPageLink = data.next;
+  while (nextPageLink != null) {
+    data = await (await fetch(nextPageLink)).json();
+    results.push(...data.results);
+    nextPageLink = data.next;
+  }
+  return results;
 };
 
 /**
- *
- * @param {String} link - a initial link to get data from
- * @param {Number} pages - the amount of pages to get data from
- * @returns {Array} - all the data collected
+ * gets pilots from db 
+ * @param {Array} pilotsUrls - array with pilots urls
+ * @returns {Object} - hash map of pilots
  */
-const getDataFromAllPages = async (link, totalNumOfPages) => {
-  const dataArr = [];
-  for (let page = 1; page < totalNumOfPages; page++) {
-    const data = await (await fetch(link)).json();
-    link = data.next;
-    dataArr.push(...data.results);
+const getPilotsHashMap = async (pilotsUrls) => {
+  const pilotUrlToPilotMap = {};
+  for (let pilotUrl of pilotsUrls) {
+    pilotUrlToPilotMap[pilotUrl] = await (await fetch(pilotUrl)).json();
   }
-  return dataArr;
+  return pilotUrlToPilotMap;
 };
-
-/**
- * 
- * @param {Array} pilotsUrl 
- * @returns 
- */
-const getPilotsAndTheirHomeWorldsUrl = async (pilotsUrl) => {
-  const pilotsObj = {};
-  for (let pilotIndex = 0; pilotIndex < pilotsUrl.length; pilotIndex++) {
-    const pilot = await (await fetch(pilotsUrl[pilotIndex])).json();
-    pilotsObj[pilot.url] = {
-      name: pilot.name,
-      homeWorld: '',
-    };
-    pilotsObj[pilot.url].homeWorld = pilot.homeworld;
-  }
-  return pilotsObj;
-};
-
 
 export default {
-  getDataFromAllPages,
-  getInitialDataFor,
-  getPilotsAndTheirHomeWorldsUrl,
+  getDataFor,
+  getPilotsHashMap
 };

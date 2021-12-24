@@ -1,132 +1,89 @@
 import { useState, useEffect } from 'react';
 import apiService from './services/api-service';
+import Loader from './components/ux/Loader';
+import PlanetPopulationChart from './components/PlanetPopulationChart';
+import VehicleWithMaxPopulationTable from './components/VehicleWithMaxPopulationTable';
 
 function App() {
-  /**
-   * gets all planets and saves only required data in hashmap.
-   * in addition, adds selected planets to the store.
-   * @returns {Object} - planetsHashMap, contains planet name and planet population of all the planets
-   */
-  const getAllPlanetsAndInitializePlanetChart = async () => {
-    const planetsForChart = [];
-    const selectedPlanets = {
-      Tatooine: true,
-      Alderaan: true,
-      Naboo: true,
-      Bespin: true,
-      Endor: true,
-    };
-    const allPlanets = [];
-    const planetsHashMap = {};
-    const initialPlanetsData = await apiService.getInitialDataFor('planets');
-    allPlanets.push(...initialPlanetsData.results);
-    allPlanets.push(
-      ...(await apiService.getDataFromAllPages(
-        initialPlanetsData.initialPage,
-        initialPlanetsData.totalNumOfPages
-      ))
-    );
-    for (let planet of allPlanets) {
-      const planetObj = {
-        name: planet.name,
-        population:
-          planet.population === 'unknown' ? 0 : parseInt(planet.population),
-      };
-      planetsHashMap[planet.url] = planetObj;
-      if (selectedPlanets[`${planet.name}`]) {
-        planetsForChart.push(planetObj);
-      }
-      planetsForChart.sort((planetA, planetB)=>{
-        return planetA.population - planetB.population
-      })
-    }
-    setPlanets(planetsForChart);
-    return planetsHashMap;
-  };
-
-  /**
-   * gets all vehicles and saves only required data in hashMap.
-   * @returns {Object} - contains vehicles hashMap and an Array of pilot urls
-   */
-  const getVehiclesAndPilotsUrl = async () => {
-    const vehiclesArr = [];
-    const pilotsUrl = [];
-    const checkForCopiesHashMap = {};
-    const vehiclesHashMap = {};
-    const initialVehiclesData = await apiService.getInitialDataFor('vehicles');
-    vehiclesArr.push(...initialVehiclesData.results);
-    vehiclesArr.push(
-      ...(await apiService.getDataFromAllPages(
-        initialVehiclesData.initialPage,
-        initialVehiclesData.totalNumOfPages
-      ))
-    );
-    for (let vehicle of vehiclesArr) {
-      if (vehicle.pilots.length > 0) {
-        vehiclesHashMap[vehicle.url] = {
-          name: vehicle.name,
-          pilots: {},
-          populationSumOfAllPilots: 0,
-          url: vehicle.url,
-        };
-        vehicle.pilots.forEach((pilotURL) => {
-          vehiclesHashMap[vehicle.url].pilots[pilotURL] = pilotURL;
-          if (checkForCopiesHashMap[pilotURL]) {
-            console.log('Duplicated data detected: pilot already exist');
-          } else {
-            pilotsUrl.push(pilotURL);
-            checkForCopiesHashMap[pilotURL] = pilotURL;
-          }
-        });
-      }
-    }
-    return {
-      pilotsUrl,
-      vehicles: vehiclesHashMap,
-    };
-  };
-
-  const [vehicle, setVehicle] = useState();
-  const [planets, setPlanets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [vehicle, setVehicle] = useState();
+  const [pilots, setPilots] = useState();
+  const [planets, setPlanets] = useState();
+  const [chartPlanets, setChartPlanets] = useState();
 
-  useEffect(() => {
-    /**
-     * gets all vehicles and their pilots,
-     * gets all pilots and their home planets,
-     * gets all planets and initializes planet chart,
-     * inserts planets in pilots and pilots in vehicles
-     * finds the vehicle with the largest sum of all pilots home planets population and sets store
-     * disables the loader
-     */
-    const initializeApp = async () => {
-      const { vehicles, pilotsUrl } = await getVehiclesAndPilotsUrl();
-      const pilots = await apiService.getPilotsAndTheirHomeWorldsUrl(pilotsUrl);
-      const planets = await getAllPlanetsAndInitializePlanetChart();
-      let selectedVehicle = {};
+  /**
+   * gets all planets and saves in hashmap.
+   * + changes the population attribute to 0 if string cant be represented by number , otherwise converts to number.
+   * in addition, adds planets For Chart to the store.
+   * @param {Object} planetsForChart - hashmap with the names of the planets needed for the chart
+   * @returns {Object} - planetsHashMap
+   */
+  const getPlanetsHashMapAndInitializePlanetChart = async (planetsForChart) => {
+    const chartPlanets = [];
+    const planetUrlToPlanetMap = {};
+    const planets = await apiService.getDataFor('planets');
+    for (let planet of planets) {
+      planet.population =
+        planet.population === 'unknown' ? 0 : parseInt(planet.population);
 
-      for (let vehicle of Object.values(vehicles)) {
-        let populationSumOfAllPilots = 0;
-        let maxPopulationSumOfAllPilots = 0;
-        for (let pilotURL in vehicle.pilots) {
-          const pilot = { ...pilots[pilotURL] };
-          pilot.homeWorld = planets[pilot.homeWorld];
-          populationSumOfAllPilots +=  pilot.homeWorld.population;
-          vehicles[vehicle.url].pilots[pilotURL] = pilot;
-        }
-        vehicles[vehicle.url].populationSumOfAllPilots =
-          populationSumOfAllPilots;
-        if (populationSumOfAllPilots > maxPopulationSumOfAllPilots) {
-          maxPopulationSumOfAllPilots = populationSumOfAllPilots;
-          selectedVehicle = vehicles[vehicle.url];
-        }
+      planetUrlToPlanetMap[planet.url] = planet;
+      if (planetsForChart.has(planet.name)) {
+        chartPlanets.push(planet);
       }
-      console.log(selectedVehicle);
-      setVehicle(selectedVehicle);
-      setIsLoading(false);
-    };
+      chartPlanets.sort((firstPlant, secondPlanet) => {
+        return firstPlant.population - secondPlanet.population;
+      });
+    }
+    setChartPlanets(chartPlanets);
+    return planetUrlToPlanetMap;
+  };
 
-    initializeApp();
+  useEffect(async () => {
+    const vehicles = await apiService.getDataFor('vehicles');
+    const pilotsUrls = new Set();
+    for (let vehicle of vehicles) {
+      for (let pilotUrl of vehicle.pilots) {
+        pilotsUrls.add(pilotUrl);
+      }
+    }
+    const pilots = await apiService.getPilotsHashMap(pilotsUrls);
+    const planetsForChart = new Set([
+      'Tatooine',
+      'Alderaan',
+      'Naboo',
+      'Bespin',
+      'Endor',
+    ]);
+    const planets = await getPlanetsHashMapAndInitializePlanetChart(
+      planetsForChart
+    );
+
+    const maxPopulationVehicle = {
+      vehicle: null,
+      population: 0,
+    };
+    for (let vehicle of Object.values(vehicles)) {
+      let vehiclePopulation = 0;
+      for (let pilotURL of vehicle.pilots) {
+        vehiclePopulation += planets[pilots[pilotURL].homeworld].population;
+      }
+
+      if (maxPopulationVehicle.population < vehiclePopulation) {
+        maxPopulationVehicle.vehicle = vehicle;
+        maxPopulationVehicle.population = vehiclePopulation;
+      }
+    }
+
+    const vehiclePilots = maxPopulationVehicle.vehicle.pilots.map(
+      (pilot) => pilots[pilot]
+    );
+    const VehiclePilotsHomePlanets = vehiclePilots.map(
+      (pilot) => planets[pilot.homeworld]
+    );
+    setVehicle(maxPopulationVehicle.vehicle);
+    setPilots(vehiclePilots);
+    setPlanets(VehiclePilotsHomePlanets);
+    setIsLoading(false);
   }, []);
 
   return (
@@ -135,56 +92,19 @@ function App() {
         className='container'
         style={isLoading ? { display: 'none' } : { display: 'block' }}
       >
-        <table>
-          <tbody>
-            <tr className='flexup'>
-              <td className='box'>Vehicle name with the largest sum</td>
-              <td className='box'>{vehicle ? vehicle.name : ''}</td>
-            </tr>
-            <tr className='flexup'>
-              <td className='box'>
-                Related home planets and their respective population
-              </td>
-              <td className='box'>
-                {vehicle
-                  ? Object.values(vehicle.pilots).map((pilot) => [
-                      pilot.homeWorld.name + ', ',
-                      pilot.homeWorld.population,
-                    ])
-                  : ''}
-              </td>
-            </tr>
-            <tr className='flexup'>
-              <td className='box'>Related pilot names</td>
-              <td className='box'>
-                {vehicle
-                  ? Object.values(vehicle.pilots).map((pilot) => pilot.name)
-                  : ''}
-              </td>
-            </tr>
-            <tr></tr>
-          </tbody>
-        </table>
-        <div className='chart'>
-          {planets.map((planet) => (
-            <div key={planet.name} className='bar-container'>
-              <p className='dynamic-text'>{planet.population}</p>
-              <div
-                className='bar'
-                style={{
-                  height: `${Math.ceil(planet.population / 15000000)}px`,
-                }}
-              ></div>
-              <p className='dynamic-text'>{planet.name}</p>
-            </div>
-          ))}
-        </div>
+        <VehicleWithMaxPopulationTable
+          vehicle={vehicle}
+          planets={planets}
+          pilots={pilots}
+        />
+        <PlanetPopulationChart chartPlanets={chartPlanets} />
       </div>
+
       <div
         className='pageLoading'
         style={isLoading ? { display: 'flex' } : { display: 'none' }}
       >
-        <div className='loader'>Loading...</div>
+        <Loader />
       </div>
     </>
   );
