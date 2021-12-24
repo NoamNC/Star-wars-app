@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import apiService from './services/api-service';
-import Button from './components/Button';
 
 function App() {
   /**
@@ -37,6 +36,9 @@ function App() {
       if (selectedPlanets[`${planet.name}`]) {
         planetsForChart.push(planetObj);
       }
+      planetsForChart.sort((planetA, planetB)=>{
+        return planetA.population - planetB.population
+      })
     }
     setPlanets(planetsForChart);
     return planetsHashMap;
@@ -70,7 +72,7 @@ function App() {
         vehicle.pilots.forEach((pilotURL) => {
           vehiclesHashMap[vehicle.url].pilots[pilotURL] = pilotURL;
           if (checkForCopiesHashMap[pilotURL]) {
-            console.log('pilot already exist');
+            console.log('Duplicated data detected: pilot already exist');
           } else {
             pilotsUrl.push(pilotURL);
             checkForCopiesHashMap[pilotURL] = pilotURL;
@@ -109,7 +111,7 @@ function App() {
         for (let pilotURL in vehicle.pilots) {
           const pilot = { ...pilots[pilotURL] };
           pilot.homeWorld = planets[pilot.homeWorld];
-          populationSumOfAllPilots = +pilot.homeWorld.population;
+          populationSumOfAllPilots +=  pilot.homeWorld.population;
           vehicles[vehicle.url].pilots[pilotURL] = pilot;
         }
         vehicles[vehicle.url].populationSumOfAllPilots =
@@ -119,8 +121,6 @@ function App() {
           selectedVehicle = vehicles[vehicle.url];
         }
       }
-
-      console.log(vehicles);
       console.log(selectedVehicle);
       setVehicle(selectedVehicle);
       setIsLoading(false);
@@ -130,12 +130,11 @@ function App() {
   }, []);
 
   return (
-    <div>
+    <>
       <div
         className='container'
         style={isLoading ? { display: 'none' } : { display: 'block' }}
       >
-        {/* <Button /> */}
         <table>
           <tbody>
             <tr className='flexup'>
@@ -168,15 +167,15 @@ function App() {
         </table>
         <div className='chart'>
           {planets.map((planet) => (
-            <div key={planet.name}>
-              <span>{planet.population}</span>
+            <div key={planet.name} className='bar-container'>
+              <p className='dynamic-text'>{planet.population}</p>
               <div
                 className='bar'
                 style={{
-                  height: `${Math.ceil(planet.population / 20000000)}px`,
+                  height: `${Math.ceil(planet.population / 15000000)}px`,
                 }}
               ></div>
-              <span>{planet.name}</span>
+              <p className='dynamic-text'>{planet.name}</p>
             </div>
           ))}
         </div>
@@ -187,7 +186,7 @@ function App() {
       >
         <div className='loader'>Loading...</div>
       </div>
-    </div>
+    </>
   );
 }
 

@@ -7,7 +7,6 @@ const BASEURL = 'https://swapi.dev/api';
  */
 const getInitialDataFor = async (dataType) => {
   const initialData = await (await fetch(`${BASEURL}/${dataType}/`)).json();
-
   return {
     initialPage: initialData.next,
     totalNumOfPages: Math.ceil(initialData.count / initialData.results.length),

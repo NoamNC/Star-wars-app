@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap');
+/* @import url('https://allfont.net/allfont.css?fonts=star-jedi'); */
 
 * {
   box-sizing: border-box;
@@ -7,7 +8,7 @@
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Star Jedi','Poppins', sans-serif;
 }
 
 .container {
@@ -15,56 +16,56 @@ body {
   padding: 20px;
 }
 
-
-/* .btn {
-  display: inline-block;
-  background: #000;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  margin: 5px;
-  border-radius: 5px;
-  cursor: pointer;
-  text-decoration: none;
-  font-size: 15px;
-  font-family: inherit;
+.dynamic-text{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
 }
 
-.btn:focus {
-  outline: none;
-}
-
-.btn:active {
-  transform: scale(0.98);
-}
-
-.btn-block {
-  display: block;
-  width: 100%;
-} */
 
 
 
-table, td, th {
+ td {
   border: 1px solid black;
 }
 
 table {
-  border-collapse: collapse;
+  border-radius: 12px;
+  border: 1px solid black;
+  /* border-collapse: collapse; */
+  width: 100%;
+  padding: 20px;
 }
 .flexup{
   display: flex;
-
+  
 }
 
 .box{
   width: 50%;
   padding: 20px;
+
 }
+.bar-container{
+  min-width: 5%;
+  width: 150px;
+  padding: 10px;
+}
+
+
 
 .bar{
   border: 1px solid black;
-  background-color: #EEEEEE;
+  /* box-shadow:  -1px 1px #616161,
+  -2px 2px #616161,
+  -3px 3px #616161,
+  -4px 4px #616161,
+  -5px 5px #616161; */
+  /* background-color: #EEEEEE; */
+  background: linear-gradient(to top, #02b452 0%, #016129 100%);
+  border-radius: 10px;
+
 }
 
 .chart{
