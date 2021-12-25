@@ -4,7 +4,7 @@ import './PlanetPopulationChart.css';
 const PlanetPopulationChart = ({ chartPlanets, width }) => {
   return (
     <section id='planet-population-chart'>
-      <p style={{ color: ' #feda4a', margin: '60px 0px 30px 0px' }}>
+      <p style={{margin: '60px 5px 30px 0px' }}>
         A bar chart that compares the home planets own population:
       </p>
       <div className='chart-container'>
@@ -15,7 +15,7 @@ const PlanetPopulationChart = ({ chartPlanets, width }) => {
               : { display: 'block', padding: '10px' }
           }
         >
-          * M = million
+           M = million
         </p>
         <div className='chart'>
           {chartPlanets?.map((planet) => (
