@@ -33,7 +33,7 @@ const VehicleWithMaxPopulationTable = ({ vehicle, planets, pilots }) => {
             </td>
             <td className='table_data'>
               {planets?.map((planet) => [
-                planet.name + ' : ',
+                planet.name + ':  ',
                 planet.population.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
               ])}
             </td>

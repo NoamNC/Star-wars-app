@@ -3,7 +3,7 @@ const BASEURL = 'https://swapi.dev/api';
 /**
  * gets data according to dataType
  * @param {String} dataType  represents which data do you want to receive.
- * @returns {Array}  containing the data
+ * @returns {Array}  Array with data
  */
 const getDataFor = async (dataType) => {
   const data = await (await fetch(`${BASEURL}/${dataType}/`)).json();

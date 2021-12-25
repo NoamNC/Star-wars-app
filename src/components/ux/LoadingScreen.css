@@ -1,10 +1,11 @@
+
 .loader {
     display: flex;
     justify-content: center;
     position: relative;
     height: 800px;
-    color: #feda4a;
-    font-family: 'Pathway Gothic One', sans-serif;
+    color: var(--default-color);
+    font-family:  sans-serif;
     font-size: 500%;
     font-weight: 600;
     letter-spacing: 6px;
