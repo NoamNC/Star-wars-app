@@ -39,13 +39,13 @@ function App() {
       if (planetsForChart.has(planet.name)) {
         chartPlanets.push(planet);
       }
-      // Does a sorted chart look better??
-      //
-      // chartPlanets.sort((firstPlant, secondPlanet) => {
-      //   return firstPlant.population - secondPlanet.population;
-      // });
-      //
     }
+    // Does a sorted chart look better??
+    //
+    // chartPlanets.sort((firstPlanet, secondPlanet) => {
+    //   return firstPlanet.population - secondPlanet.population;
+    // });
+
     setChartPlanets(chartPlanets);
     return planetUrlToPlanetMap;
   };
@@ -56,10 +56,10 @@ function App() {
     window.addEventListener('resize', updateDimensions);
 
     const vehicles = await apiService.getDataFor('vehicles');
-    const pilotsUrls = new Set();
+    const pilotsUrls = [];
     for (let vehicle of vehicles) {
       for (let pilotUrl of vehicle.pilots) {
-        pilotsUrls.add(pilotUrl);
+        pilotsUrls.push(pilotUrl);
       }
     }
     const pilots = await apiService.getPilotsHashMap(pilotsUrls);
@@ -123,7 +123,7 @@ function App() {
           planets={planets}
           pilots={pilots}
         />
-        <PlanetPopulationChart chartPlanets={chartPlanets} />
+        <PlanetPopulationChart chartPlanets={chartPlanets} width={width} />
       </div>
       <div style={isLoading ? { display: 'block' } : { display: 'none' }}>
         <LoadingScreen />

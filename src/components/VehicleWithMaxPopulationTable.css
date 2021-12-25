@@ -1,5 +1,4 @@
 .table_data {
-    color: #feda4a;
     border: 2px solid #feda4a;
     width: 50%;
     padding: 20px;
@@ -7,7 +6,6 @@
   
   .table {
     border-collapse: collapse;
-    color: #feda4a;
     border: 2px solid #feda4a;
     padding: 2px;
   }
