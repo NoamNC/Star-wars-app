@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import apiService from './services/api-service';
-import Loader from './components/ux/Loader';
+import LoadingScreen from './components/ux/LoadingScreen';
 import PlanetPopulationChart from './components/PlanetPopulationChart';
 import VehicleWithMaxPopulationTable from './components/VehicleWithMaxPopulationTable';
 
@@ -10,6 +10,15 @@ function App() {
   const [pilots, setPilots] = useState();
   const [planets, setPlanets] = useState();
   const [chartPlanets, setChartPlanets] = useState();
+  const [width, setWindowWidth] = useState(0);
+
+  /**
+   * updates width param needed for dynamic styling.
+   */
+  const updateDimensions = () => {
+    const width = window.innerWidth;
+    setWindowWidth(width);
+  };
 
   /**
    * gets all planets and saves in hashmap.
@@ -30,15 +39,22 @@ function App() {
       if (planetsForChart.has(planet.name)) {
         chartPlanets.push(planet);
       }
-      chartPlanets.sort((firstPlant, secondPlanet) => {
-        return firstPlant.population - secondPlanet.population;
-      });
+      // Does a sorted chart look better??
+      //
+      // chartPlanets.sort((firstPlant, secondPlanet) => {
+      //   return firstPlant.population - secondPlanet.population;
+      // });
+      //
     }
     setChartPlanets(chartPlanets);
     return planetUrlToPlanetMap;
   };
 
   useEffect(async () => {
+    updateDimensions();
+
+    window.addEventListener('resize', updateDimensions);
+
     const vehicles = await apiService.getDataFor('vehicles');
     const pilotsUrls = new Set();
     for (let vehicle of vehicles) {
@@ -86,11 +102,21 @@ function App() {
     setIsLoading(false);
   }, []);
 
+  window.removeEventListener('resize', updateDimensions);
+
   return (
     <>
       <div
-        className='container'
-        style={isLoading ? { display: 'none' } : { display: 'block' }}
+        style={
+          isLoading
+            ? { display: 'none' }
+            : {
+                display: 'block',
+                padding: `${Math.ceil(width / 400)}%  ${Math.ceil(
+                  width / 60
+                )}%`,
+              }
+        }
       >
         <VehicleWithMaxPopulationTable
           vehicle={vehicle}
@@ -99,12 +125,8 @@ function App() {
         />
         <PlanetPopulationChart chartPlanets={chartPlanets} />
       </div>
-
-      <div
-        className='pageLoading'
-        style={isLoading ? { display: 'flex' } : { display: 'none' }}
-      >
-        <Loader />
+      <div style={isLoading ? { display: 'block' } : { display: 'none' }}>
+        <LoadingScreen />
       </div>
     </>
   );

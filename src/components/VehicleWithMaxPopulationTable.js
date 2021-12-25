@@ -1,38 +1,51 @@
 import React from 'react';
+import './VehicleWithMaxPopulationTable.css';
 
 const VehicleWithMaxPopulationTable = ({ vehicle, planets, pilots }) => {
+  const elements = [
+    'Vehicle name with the largest sum',
+    vehicle ? vehicle.name : '',
+  ];
+
+  const items = [];
+
+  for (const [index, value] of elements.entries()) {
+    items.push(
+      <td className='table_data' key={index}>
+        {value}
+      </td>
+    );
+  }
+
   return (
-    <>
-      <h2 style={{color: ' #feda4a'}}>Your Challenge:</h2>
-      <p style={{color: ' #feda4a'}}>
-        1. Which vehicle names have the highest sum
-        of population for all its pilots’ home planets?
+    <section id='vehicle-with-max-population-table'>
+      <p style={{ color: ' #feda4a', margin: '20px 5px' }}>
+        The vehicle's name with the highest sum of population for all its pilots
+        home planets is represented in the following table:
       </p>
-      <table>
+
+      <table className='table'>
         <tbody>
-          <tr className='flexup'>
-            <td className='box'>Vehicle name with the largest sum</td>
-            <td className='box'>{vehicle ? vehicle.name : ''}</td>
-          </tr>
-          <tr className='flexup'>
-            <td className='box'>
+          <tr>{items}</tr>
+          <tr>
+            <td className='table_data'>
               Related home planets and their respective population
             </td>
-            <td className='box'>
+            <td className='table_data'>
               {planets?.map((planet) => [
                 planet.name + ', ',
                 planet.population,
               ])}
             </td>
           </tr>
-          <tr className='flexup'>
-            <td className='box'>Related pilot names</td>
-            <td className='box'>{pilots?.map((pilot) => pilot.name)}</td>
+          <tr>
+            <td className='table_data'>Related pilot names</td>
+            <td className='table_data'>{pilots?.map((pilot) => pilot.name)}</td>
           </tr>
           <tr></tr>
         </tbody>
       </table>
-    </>
+    </section>
   );
 };
 
