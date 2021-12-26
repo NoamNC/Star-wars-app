@@ -6,24 +6,28 @@ const LoadingScreen = () => {
       <section className='loader'>
         <div className='loader_crawl'>
           <div className='loader_crawl_title'>
-            <p>Episode IV</p>
+            <p style={{margin: '60px 0px'}}>Episode IV</p>
             <h1>A New Hope</h1>
           </div>
+          <br />
           <p>
             I want to use this loading time and thank you for giving me this opportunity to demonstrate my skills.
             Hey, my name is Noam Cohen. I am a 31 year old fullStack programer from Tel Aviv.
           </p>
+          <br />
           <p>
              3 things about me:
              I am a highly motivated, hard working and creative programer with a passion for code!
              I thrive in a social enlivenment but I work super efficiently independently. 
              I have a dog named Lima and shes the love of my life. 
           </p>
+          <br />
           <p>
             If you got this far you're either checking out my code thoroughly or you're being very patient because the sever is slow. 
             in both cases I sincerely appreciate it very much.
             thank you for your time.
           </p>
+          <br />
           <p>
                           000000000000000_00000000000000000
                           00000000000000___0000000000000000
