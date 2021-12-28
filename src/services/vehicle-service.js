@@ -44,11 +44,11 @@ const getMaxPopulationVehicle = (planets, vehicles, people) => {
     let vehiclePopulation = 0;
     const vehiclePilots = {};
     vehicle.pilots.forEach((pilotUrl) => {
-      const { name, population } = planetsHashMap[pilotsHashMap[pilotUrl].homeworld];
-      vehiclePopulation += population;
-      vehiclePilots[pilotsHashMap[pilotUrl].name] = {
-        homeworldName: name,
-        population,
+      const pilot = pilotsHashMap[pilotUrl];
+      vehiclePopulation += planetsHashMap[pilot.homeworld].population;
+      vehiclePilots[pilot.name] = {
+        homeworldName: planetsHashMap[pilot.homeworld].name,
+        population: planetsHashMap[pilot.homeworld].population,
       };
       if (maxPopulation < vehiclePopulation) {
         maxPopulation = vehiclePopulation;
