@@ -1,12 +1,27 @@
-
 const BASEURL = 'https://swapi.dev/api';
+
+
+/**
+ * @param {String} resource  represents collection desired
+ * @returns {Object}
+ */
+const getCollectionFirstPage = async (resource) => {
+  try {
+    return await (await fetch(`${BASEURL}/${resource}/?page=1`)).json();
+  } catch (err) {
+    console.log(err);
+    throw(
+      `fetch from server Failed. check if *${resource}* exist in the API's collections`
+    );
+  }
+};
 
 /**
  * @param {String} resource  represents collection desired
  * @returns {Array}
  */
 const getAllDataFromCollection = async (resource) => {
-  const data = await (await fetch(`${BASEURL}/${resource}/`)).json();
+  const data = await getCollectionFirstPage(resource);
   let results = data.results;
   const numOfPages = Math.ceil(data.count / data.results.length);
   const requests = [];
@@ -14,17 +29,11 @@ const getAllDataFromCollection = async (resource) => {
     requests.push(fetch(`${BASEURL}/${resource}/?page=${page}`));
   }
   const responses = await Promise.all(requests);
-  const promiseResults = await Promise.all(
-    responses.map((response) => response.json())
-  );
-  promiseResults.forEach((promiseResult) =>
-    results.push(...promiseResult.results)
-  );
-  return results
+  const promiseResults = await Promise.all(responses.map((response) => response.json()));
+  promiseResults.forEach((promiseResult) => results.push(...promiseResult.results));
+  return results;
 };
 
-
-
 export default {
-  getAllDataFromCollection
+  getAllDataFromCollection,
 };
