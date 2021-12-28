@@ -5,7 +5,6 @@ import vehicleService from '../services/vehicle-service';
 
 const MaxPopulationVehicle = ({ planets, vehicles, people }) => {
   const vehicle = vehicleService.getMaxPopulationVehicle(planets, vehicles, people);
-console.log(vehicle)
   return (
     <section id='vehicle-with-max-population-table'>
       <p style={{ margin: '0px 5px 20px 0px' }}>
