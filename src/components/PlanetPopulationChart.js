@@ -1,27 +1,33 @@
 import React from 'react';
 import './PlanetPopulationChart.css';
 
-const PlanetPopulationChart = ({ chartPlanets, width }) => {
+const PlanetPopulationChart = ({ planets }) => {
+  const planetsForChart = new Set([
+    'Tatooine',
+    'Alderaan',
+    'Naboo',
+    'Bespin',
+    'Endor',
+  ]);
+  const chartPlanets = [];
+  Object.values(planets).forEach((planet) => {
+    if (planetsForChart.has(planet.name)) {
+      chartPlanets.push(planet);
+    }
+  });
+
   return (
     <section id='planet-population-chart'>
-      <p style={{margin: '60px 5px 30px 0px' }}>
+      <p style={{ margin: '60px 5px 30px 0px' }}>
         A bar chart that compares the home planets own population:
       </p>
       <div className='chart-container'>
-        <p
-          style={
-            width >= 620
-              ? { display: 'none' }
-              : { display: 'block', padding: '10px' }
-          }
-        >
-           M = million
-        </p>
+        <p>M = million</p>
         <div className='chart'>
           {chartPlanets?.map((planet) => (
             <div style={{ minWidth: '0px' }} key={planet.name}>
               <p className='responsive-text'>
-                {width >= 620
+                {chartPlanets
                   ? planet.population
                       .toString()
                       .replace(/\B(?=(\d{3})+(?!\d))/g, ',')

@@ -1,32 +1,10 @@
 import React from 'react';
 import './VehicleWithMaxPopulationTable.css';
 
-const VehicleWithMaxPopulationTable = ({ vehicle, planets, pilots }) => {
-  const tableData = [
-    ['Vehicle name with the largest sum', vehicle ? vehicle.name : ''],
-    [
-      'Related home planets and their respective population',
-      planets?.map((planet) => [
-        planet.name + ':  ',
-        planet.population.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','),
-      ]),
-    ],
-    ['Related pilot names', pilots?.map((pilot) => pilot.name+' ')],
-  ];
+import vehicleService from '../services/vehicle-service';
 
-  const table = [];
-
-  for (const [index, values] of tableData.entries()) {
-    table.push(
-      <tr key={index}>
-        {values.map((data, i) => (
-          <td className='table_data' key={`${i}key`}>
-            {data}
-          </td>
-        ))}
-      </tr>
-    );
-  }
+const VehicleWithMaxPopulationTable = ({ planets, vehicles, people }) => {
+  const vehicle = vehicleService.getVehicleForChart(planets, vehicles, people);
 
   return (
     <section id='vehicle-with-max-population-table'>
@@ -36,7 +14,32 @@ const VehicleWithMaxPopulationTable = ({ vehicle, planets, pilots }) => {
       </p>
 
       <table className='table'>
-        <tbody>{table}</tbody>
+        <tbody>
+          <tr>
+            <td className='table_data'>Vehicle name with the largest sum</td>
+            <td className='table_data'>{vehicle ? vehicle.name : ''}</td>
+          </tr>
+          <tr>
+            <td className='table_data'>
+              Related home planets and their respective population
+            </td>
+            <td className='table_data'>
+              {Object.values(vehicle.pilots)?.map((pilot) => [
+                pilot.homeworldName + ': ',
+                pilot.population
+                  .toString()
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '. ',
+              ])}
+            </td>
+          </tr>
+          <tr>
+            <td className='table_data'>Related pilot names</td>
+            <td className='table_data'>
+              {Object.keys(vehicle.pilots)?.map((pilot) => pilot + ' ')}
+            </td>
+          </tr>
+          <tr></tr>
+        </tbody>
       </table>
     </section>
   );
