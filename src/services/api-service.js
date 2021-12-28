@@ -1,29 +1,26 @@
 const BASEURL = 'https://swapi.dev/api';
 
-
 /**
- * @param {String} resource  represents collection desired
+ * @param {String} resource
  * @returns {Object}
  */
-const getCollectionFirstPage = async (resource) => {
+const getFirstPage = async (resource) => {
   try {
     return await (await fetch(`${BASEURL}/${resource}/?page=1`)).json();
   } catch (err) {
     console.log(err);
-    throw(
-      `fetch from server Failed. check if *${resource}* exist in the API's collections`
-    );
+    throw `fetch from server Failed. check if *${resource}* exist in the API's collections`;
   }
 };
 
 /**
- * @param {String} resource  represents collection desired
+ * @param {String} resource
  * @returns {Array}
  */
-const getAllDataFromCollection = async (resource) => {
-  const data = await getCollectionFirstPage(resource);
-  let results = data.results;
-  const numOfPages = Math.ceil(data.count / data.results.length);
+const getAll = async (resource) => {
+  const data = await getFirstPage(resource);
+  const { results, count } = data;
+  const numOfPages = Math.ceil(count / results.length);
   const requests = [];
   for (let page = 2; page <= numOfPages; page++) {
     requests.push(fetch(`${BASEURL}/${resource}/?page=${page}`));
@@ -35,5 +32,5 @@ const getAllDataFromCollection = async (resource) => {
 };
 
 export default {
-  getAllDataFromCollection,
+  getAll,
 };

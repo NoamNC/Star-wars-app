@@ -6,20 +6,24 @@ import { hashMap } from '../utils/hash-map';
 /**
  * @returns {Array}
  */
-const getVehicles = async () => {
-  return await apiService.getAllDataFromCollection('vehicles');
+const getVehicles = () => {
+  return apiService.getAll('vehicles');
 };
+
+/**
+ * @param {Object} vehicle
+ * @returns {Boolean}
+ */
+function isManned(vehicle) {
+  return !!vehicle.pilots.length;
+}
 
 /**
  * @param {Array} vehicles
  * @returns {Array}
  */
 const getMannedVehicles = (vehicles) => {
-  return vehicles.filter((vehicle) => {
-    if (!!vehicle.pilots.length) {
-      return vehicle;
-    }
-  });
+  return vehicles.filter((vehicle) => isManned(vehicle));
 };
 
 /**
@@ -30,9 +34,9 @@ const getMannedVehicles = (vehicles) => {
  */
 const getMaxPopulationVehicle = (planets, vehicles, people) => {
   vehicles = getMannedVehicles(vehicles);
-  planets = planetService.changePopulationToInt(planets);
-  const planetsHashMap = hashMap(planets, 'url');
+  planets = planetService.formatPopulationToInt(planets);
   const pilots = peopleService.getVehiclePilots(people);
+  const planetsHashMap = hashMap(planets, 'url');
   const pilotsHashMap = hashMap(pilots, 'url');
   let maxPopulationVehicle = {};
   let maxPopulation = 0;
@@ -40,10 +44,11 @@ const getMaxPopulationVehicle = (planets, vehicles, people) => {
     let vehiclePopulation = 0;
     const vehiclePilots = {};
     vehicle.pilots.forEach((pilotUrl) => {
-      vehiclePopulation += planetsHashMap[pilotsHashMap[pilotUrl].homeworld].population;
+      const { name, population } = planetsHashMap[pilotsHashMap[pilotUrl].homeworld];
+      vehiclePopulation += population;
       vehiclePilots[pilotsHashMap[pilotUrl].name] = {
-        homeworldName: planetsHashMap[pilotsHashMap[pilotUrl].homeworld].name,
-        population: planetsHashMap[pilotsHashMap[pilotUrl].homeworld].population,
+        homeworldName: name,
+        population,
       };
       if (maxPopulation < vehiclePopulation) {
         maxPopulation = vehiclePopulation;

@@ -6,7 +6,7 @@ const LoadingScreen = () => {
       <section className='loader'>
         <div className='loader_crawl'>
           <div className='loader_crawl_title'>
-            <p style={{margin: '60px 0px'}}>Episode IV</p>
+            <p className='loader_pre-title'>Episode IV</p>
             <h1>A New Hope</h1>
           </div>
           <br />

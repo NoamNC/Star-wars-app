@@ -1,8 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap');
-:root{
-  --default-color: #feda4a
+:root {
+  --default-color: #feda4a;
 }
-
 * {
   box-sizing: border-box;
   margin: 0;
@@ -10,53 +9,52 @@
 }
 
 body {
-  font-family: 'Poppins', sans-serif ;
+  font-family: 'Poppins', sans-serif;
   color: var(--default-color);
   background-image: url('https://media.istockphoto.com/videos/night-starry-skies-with-twinkling-stars-motion-background-looping-video-id1204969069?b=1&k=20&m=1204969069&s=640x640&h=-QZJL3uz7F5SeFTZKtYuzvOaryOE6X63KtWFeErTty8=');
 }
 
-
-.components-container{
+.components-container {
   padding: 10% 35%;
-  }
+}
 
+.component-description {
+  margin: 0px 5px 30px 0px;
+}
 
-
-@media only screen and (max-width: 1920px){
-    /*Tablets [1501px -> 1920px]*/
-    .components-container{
+@media only screen and (max-width: 1920px) {
+  /* [1501px -> 1920px]*/
+  .components-container {
     padding: 50px 27%;
   }
 }
-@media only screen and (max-width: 1500px){
-    /*Tablets [1001px -> 1500px]*/
-    .components-container{
+@media only screen and (max-width: 1500px) {
+  /* [1001px -> 1500px]*/
+  .components-container {
     padding: 50px 22%;
   }
 }
-@media only screen and (max-width: 1000px){
-    /*Tablets [801px -> 1000px]*/
-    .components-container{
+@media only screen and (max-width: 1000px) {
+  /* [801px -> 1000px]*/
+  .components-container {
     padding: 50px 18%;
   }
 }
-@media only screen and (max-width: 800px){
-    /*Tablets [601px -> 800px]*/
-    .components-container{
+@media only screen and (max-width: 800px) {
+  /*Tablets [601px -> 800px]*/
+  .components-container {
     padding: 50px 10%;
   }
 }
-@media only screen and (max-width: 600px){
+@media only screen and (max-width: 600px) {
   /*Big smartphones [426px -> 600px]*/
-  .components-container{
+  .components-container {
     padding: 10% 4%;
-    
   }
 }
-@media only screen and (max-width: 425px){
-	/*Small smartphones [325px -> 425px]*/
-  .components-container{
-    padding: 7% 2% ;
+@media only screen and (max-width: 425px) {
+  /*Small smartphones [325px -> 425px]*/
+  .components-container {
+    padding: 7% 2%;
   }
 }
-

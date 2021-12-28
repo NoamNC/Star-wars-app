@@ -3,22 +3,19 @@ import apiService from './api-service';
 /**
  * @returns {Array}
  */
-const getPlanets = async () => {
-  return await apiService.getAllDataFromCollection('planets');
+const getPlanets = () => {
+  return apiService.getAll('planets');
 };
 
 /**
  * @param {Array} planets
  * @returns {Array}
  */
-const changePopulationToInt = (planets) => {
-  const planetsCopy = [];
-  planets.forEach((planet, index) => {
-    planetsCopy.push({ ...planet });
-    planetsCopy[index].population =
-      planet.population === 'unknown' ? 0 : parseInt(planet.population);
+const formatPopulationToInt = (planets) => {
+  return planets.map((planet) => {
+    planet.population = planet.population === 'unknown' ? 0 : parseInt(planet.population);
+    return { ...planet };
   });
-  return planetsCopy;
 };
 /**
  * @param {Array} planetNames
@@ -38,6 +35,6 @@ const getPlanetsForChart = (planets) => {
 
 export default {
   getPlanets,
-  changePopulationToInt,
+  formatPopulationToInt,
   getPlanetsForChart,
 };

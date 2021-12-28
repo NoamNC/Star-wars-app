@@ -3,21 +3,24 @@ import apiService from './api-service';
 /**
  * @returns {Array}
  */
-const getPeople = async () => {
-  return await apiService.getAllDataFromCollection('people');
+const getPeople = () => {
+  return apiService.getAll('people');
 };
 
 /**
- * 
- * @param {Array} people 
+ * @param {Object} person
+ * @returns {Boolean}
+ */
+function hasVehicles(person) {
+  return !!person.vehicles.length;
+}
+
+/**
+ * @param {Array} people
  * @returns {Array}
  */
 const getVehiclePilots = (people) => {
-  return people.filter((person) => {
-    if (!!person.vehicles.length) {
-      return person;
-    }
-  });
+  return people.filter((person) => hasVehicles(person));
 };
 
 export default {
