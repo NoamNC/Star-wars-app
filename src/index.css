@@ -16,3 +16,47 @@ body {
 }
 
 
+.components-container{
+  padding: 10% 35%;
+  }
+
+
+
+@media only screen and (max-width: 1920px){
+    /*Tablets [1501px -> 1920px]*/
+    .components-container{
+    padding: 50px 27%;
+  }
+}
+@media only screen and (max-width: 1500px){
+    /*Tablets [1001px -> 1500px]*/
+    .components-container{
+    padding: 50px 22%;
+  }
+}
+@media only screen and (max-width: 1000px){
+    /*Tablets [801px -> 1000px]*/
+    .components-container{
+    padding: 50px 18%;
+  }
+}
+@media only screen and (max-width: 800px){
+    /*Tablets [601px -> 800px]*/
+    .components-container{
+    padding: 50px 10%;
+  }
+}
+@media only screen and (max-width: 600px){
+  /*Big smartphones [426px -> 600px]*/
+  .components-container{
+    padding: 10% 4%;
+    
+  }
+}
+@media only screen and (max-width: 425px){
+	/*Small smartphones [325px -> 425px]*/
+  .components-container{
+    padding: 7% 2% ;
+  }
+}
+

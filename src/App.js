@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import planetService from './services/planet-service'
+import planetService from './services/planet-service';
 import peopleService from './services/people-service';
 import vehicleService from './services/vehicle-service';
 import LoadingScreen from './components/ux/LoadingScreen';
 import PlanetPopulationChart from './components/PlanetPopulationChart';
-import VehicleWithMaxPopulationTable from './components/VehicleWithMaxPopulationTable';
+import MaxPopulationVehicle from './components/MaxPopulationVehicle';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -13,7 +13,7 @@ function App() {
   const [vehicles, setVehicles] = useState();
 
   useEffect(async () => {
-    const planets = await planetService.getPlanets()
+    const planets = await planetService.getPlanets();
     const vehicles = await vehicleService.getVehicles();
     const people = await peopleService.getPeople();
     setVehicles(vehicles);
@@ -25,10 +25,10 @@ function App() {
   return (
     <>
       {!isLoading && (
-        <>
-          <VehicleWithMaxPopulationTable planets={planets} vehicles={vehicles} people={people} />
-          <PlanetPopulationChart planets={planets}  />
-        </>
+        <div className='components-container'>
+          <MaxPopulationVehicle planets={planets} vehicles={vehicles} people={people} />
+          <PlanetPopulationChart planets={planets} />
+        </div>
       )}
 
       {isLoading && <LoadingScreen />}

@@ -1,16 +1,16 @@
 import React from 'react';
-import './VehicleWithMaxPopulationTable.css';
+import './MaxPopulationVehicle.css';
 
 import vehicleService from '../services/vehicle-service';
 
-const VehicleWithMaxPopulationTable = ({ planets, vehicles, people }) => {
-  const vehicle = vehicleService.getVehicleForChart(planets, vehicles, people);
-
+const MaxPopulationVehicle = ({ planets, vehicles, people }) => {
+  const vehicle = vehicleService.getMaxPopulationVehicle(planets, vehicles, people);
+console.log(vehicle)
   return (
     <section id='vehicle-with-max-population-table'>
-      <p style={{ margin: '20px 5px 20px 0px' }}>
-        The vehicle's name with the highest sum of population for all its pilots
-        home planets is represented in the following table:
+      <p style={{ margin: '0px 5px 20px 0px' }}>
+        The vehicle's name with the highest sum of population for all its pilots home
+        planets is represented in the following table:
       </p>
 
       <table className='table'>
@@ -26,9 +26,7 @@ const VehicleWithMaxPopulationTable = ({ planets, vehicles, people }) => {
             <td className='table_data'>
               {Object.values(vehicle.pilots)?.map((pilot) => [
                 pilot.homeworldName + ': ',
-                pilot.population
-                  .toString()
-                  .replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '. ',
+                pilot.population.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '. ',
               ])}
             </td>
           </tr>
@@ -45,4 +43,4 @@ const VehicleWithMaxPopulationTable = ({ planets, vehicles, people }) => {
   );
 };
 
-export default VehicleWithMaxPopulationTable;
+export default MaxPopulationVehicle;

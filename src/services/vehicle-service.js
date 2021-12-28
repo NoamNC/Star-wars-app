@@ -11,7 +11,7 @@ const getVehicles = async () => {
 };
 
 /**
- * @param {Array} vehicles 
+ * @param {Array} vehicles
  * @returns {Array}
  */
 const getMannedVehicles = (vehicles) => {
@@ -22,14 +22,13 @@ const getMannedVehicles = (vehicles) => {
   });
 };
 
-
 /**
- * @param {Array} planets 
- * @param {Array} vehicles 
- * @param {Array} people 
+ * @param {Array} planets
+ * @param {Array} vehicles
+ * @param {Array} people
  * @returns {Object}
  */
-const getVehicleForChart = (planets, vehicles, people) => {
+const getMaxPopulationVehicle = (planets, vehicles, people) => {
   vehicles = getMannedVehicles(vehicles);
   planets = planetService.changePopulationToInt(planets);
   const planetsHashMap = hashMap(planets, 'url');
@@ -41,16 +40,14 @@ const getVehicleForChart = (planets, vehicles, people) => {
     let vehiclePopulation = 0;
     const vehiclePilots = {};
     vehicle.pilots.forEach((pilotUrl) => {
-        vehiclePopulation +=
-        planetsHashMap[pilotsHashMap[pilotUrl].homeworld].population;
+      vehiclePopulation += planetsHashMap[pilotsHashMap[pilotUrl].homeworld].population;
       vehiclePilots[pilotsHashMap[pilotUrl].name] = {
         homeworldName: planetsHashMap[pilotsHashMap[pilotUrl].homeworld].name,
-        population:
-          planetsHashMap[pilotsHashMap[pilotUrl].homeworld].population,
+        population: planetsHashMap[pilotsHashMap[pilotUrl].homeworld].population,
       };
       if (maxPopulation < vehiclePopulation) {
         maxPopulation = vehiclePopulation;
-        maxPopulationVehicle = {...vehicle};
+        maxPopulationVehicle = { ...vehicle };
         maxPopulationVehicle.pilots = vehiclePilots;
       }
     });
@@ -60,5 +57,5 @@ const getVehicleForChart = (planets, vehicles, people) => {
 
 export default {
   getVehicles,
-  getVehicleForChart,
+  getMaxPopulationVehicle,
 };
