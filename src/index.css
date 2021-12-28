@@ -9,52 +9,60 @@
 }
 
 body {
+  scrollbar-width: none; 
   font-family: 'Poppins', sans-serif;
   color: var(--default-color);
   background-image: url('https://media.istockphoto.com/videos/night-starry-skies-with-twinkling-stars-motion-background-looping-video-id1204969069?b=1&k=20&m=1204969069&s=640x640&h=-QZJL3uz7F5SeFTZKtYuzvOaryOE6X63KtWFeErTty8=');
 }
 
-.components-container {
-  padding: 10% 35%;
+body::-webkit-scrollbar {
+  display: none; /* for Chrome, Safari, and Opera */
 }
 
 .component-description {
   margin: 0px 5px 30px 0px;
 }
+.components-container {
+  padding: 10% 35% 0px 35%;
+}
+.link{
+  color: #f8dd72;
+  text-decoration: none;
+}
 
 @media only screen and (max-width: 1920px) {
   /* [1501px -> 1920px]*/
   .components-container {
-    padding: 50px 27%;
+    padding: 50px 27% 0px 27%;
   }
 }
 @media only screen and (max-width: 1500px) {
   /* [1001px -> 1500px]*/
   .components-container {
-    padding: 50px 22%;
+    padding: 50px 22% 0px 22%;
   }
 }
 @media only screen and (max-width: 1000px) {
   /* [801px -> 1000px]*/
   .components-container {
-    padding: 50px 18%;
+    padding: 50px 18% 0px 18%;
   }
 }
 @media only screen and (max-width: 800px) {
   /*Tablets [601px -> 800px]*/
   .components-container {
-    padding: 50px 10%;
+    padding: 50px 10% 0px 10%;
   }
 }
 @media only screen and (max-width: 600px) {
   /*Big smartphones [426px -> 600px]*/
   .components-container {
-    padding: 10% 4%;
+    padding: 10% 4% 0px 4%;
   }
 }
 @media only screen and (max-width: 425px) {
   /*Small smartphones [325px -> 425px]*/
   .components-container {
-    padding: 7% 2%;
+    padding: 7% 2% 0px 2%;
   }
 }

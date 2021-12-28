@@ -3,6 +3,7 @@ import planetService from './services/planet-service';
 import peopleService from './services/people-service';
 import vehicleService from './services/vehicle-service';
 import LoadingScreen from './components/ux/LoadingScreen';
+import Footer from './components/Footer';
 import PlanetPopulationChart from './components/PlanetPopulationChart';
 import MaxPopulationVehicle from './components/MaxPopulationVehicle';
 
@@ -28,6 +29,7 @@ function App() {
         <div className='components-container'>
           <MaxPopulationVehicle planets={planets} vehicles={vehicles} people={people} />
           <PlanetPopulationChart planets={planets} />
+          <Footer />
         </div>
       )}
 

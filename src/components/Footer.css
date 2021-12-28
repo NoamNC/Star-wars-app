@@ -1,0 +1,9 @@
+#footer{
+    display: flex;
+    align-items: baseline;
+    padding: 20px 0px;
+}
+
+.footer_text{
+    margin-right: 10px;
+}
