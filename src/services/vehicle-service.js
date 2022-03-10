@@ -50,12 +50,12 @@ const getMaxPopulationVehicle = (planets, vehicles, people) => {
         homeworldName: planetsHashMap[pilot.homeworld].name,
         population: planetsHashMap[pilot.homeworld].population,
       };
-      if (maxPopulation < vehiclePopulation) {
-        maxPopulation = vehiclePopulation;
-        maxPopulationVehicle = { ...vehicle };
-        maxPopulationVehicle.pilots = vehiclePilots;
-      }
     });
+    if (maxPopulation < vehiclePopulation) {
+      maxPopulation = vehiclePopulation;
+      maxPopulationVehicle = { ...vehicle };
+      maxPopulationVehicle.pilots = vehiclePilots;
+    }
   });
   return maxPopulationVehicle;
 };
